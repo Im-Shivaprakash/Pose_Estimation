@@ -31,17 +31,22 @@ def is_initial_standing(landmarks):
             abs(hip.x - knee.x) < alignment_tolerance and
             abs(knee.x - ankle.x) < alignment_tolerance)
 
+squat_in_progress = False  # Initialize the squat state
+
 def count_squats(landmarks):
-    global squat_in_progress  # Declare as global
+    global squat_in_progress  # Keep track of squat state globally
 
     standing_pose = is_initial_standing(landmarks)
     hips_back_angle, knee_not_over_foot = check_squat_conditions(landmarks)
 
-    # Detect squat progress
-    if not standing_pose and hips_back_angle and knee_not_over_foot:
-        squat_in_progress = True
-    elif standing_pose and squat_in_progress:
-        squat_in_progress = False  # Reset the squat progress
-        return 1  # Count a rep
+    # Detect when a squat is in progress
+    if not squat_in_progress and hips_back_angle and knee_not_over_foot:
+        squat_in_progress = True  # Squat has started
+        return 0  # No rep yet, just started the squat
+    
+    # Detect when squat is completed (returning to standing position)
+    elif squat_in_progress and standing_pose:
+        squat_in_progress = False  # Squat completed, reset state
+        return 1  # Count 1 rep
 
-    return 0  # No rep counted
+    return 0

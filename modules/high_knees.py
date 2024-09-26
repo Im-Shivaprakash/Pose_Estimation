@@ -1,39 +1,38 @@
+# high_knees.py
+
 import mediapipe as mp
+import numpy as np
 
-# Initialize MediaPipe Pose model
 mp_pose = mp.solutions.pose
+pose = mp_pose.Pose()
 
-# Define thresholds for knee movement
-knee_up_threshold = 0.1  # Threshold for knee to be considered "up"
-knee_down_threshold = 0.1  # Threshold for knee to be considered "down"
+alignment_tolerance = 0.1  # Adjust as necessary
+high_knee_in_progress = False  # Global variable for high knee state
 
-reps = 0
-left_knee_up = False
-right_knee_up = False
+def check_high_knee_conditions(landmarks):
+    hip = landmarks[mp_pose.PoseLandmark.LEFT_HIP.value]
+    knee = landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value]
 
-def count_high_knees_reps(landmarks):
-    global reps, left_knee_up, right_knee_up
+    hip_pos = np.array([hip.x, hip.y])
+    knee_pos = np.array([knee.x, knee.y])
 
-    left_knee_y = landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value].y
-    right_knee_y = landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value].y
-    left_hip_y = landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y
-    right_hip_y = landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value].y
+    knee_above_hip = knee_pos[1] > hip_pos[1]
 
-    left_knee_relative_y = left_knee_y - left_hip_y
-    right_knee_relative_y = right_knee_y - right_hip_y
+    return knee_above_hip
 
-    # Check left knee movement
-    if left_knee_relative_y > knee_up_threshold and not left_knee_up:
-        left_knee_up = True  # Mark knee as up
-    elif left_knee_relative_y < -knee_down_threshold and left_knee_up:
-        reps += 1  # Count as one full rep
-        left_knee_up = False  # Reset for the next rep
+def count_high_knees(landmarks):
+    global high_knee_in_progress  # Keep track of high knee state globally
 
-    # Check right knee movement
-    if right_knee_relative_y > knee_up_threshold and not right_knee_up:
-        right_knee_up = True  # Mark knee as up
-    elif right_knee_relative_y < -knee_down_threshold and right_knee_up:
-        reps += 1  # Count as one full rep
-        right_knee_up = False  # Reset for the next rep
+    knee_above_hip = check_high_knee_conditions(landmarks)
 
-    return reps
+    # Detect when a high knee is in progress
+    if not high_knee_in_progress and knee_above_hip:
+        high_knee_in_progress = True  # High knee has started
+        return 0  # No rep yet, just started the high knee
+    
+    # Detect when high knee is completed (knee back down)
+    elif high_knee_in_progress and not knee_above_hip:
+        high_knee_in_progress = False  # High knee completed, reset state
+        return 1  # Count 1 rep
+
+    return 0
