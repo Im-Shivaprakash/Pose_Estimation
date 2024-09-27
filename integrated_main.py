@@ -6,12 +6,18 @@ from modules.burpees import count_burpee_reps as burpees
 from modules.squats import count_squats as squats
 from modules.high_knees import count_high_knees as highknees
 from modules.mountain_climbers import count_mountain_climber_reps as mountainclimbers
-
+import subprocess
 
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose()
 mp_drawing = mp.solutions.drawing_utils
 
+def run_database_connection():
+    result = subprocess.run(['python', 'database_connection.py'], capture_output=True, text=True)
+    if result.returncode == 0:
+        print("database_connection.py executed successfully.")
+    else:
+        print(f"Error running database_connection.py:\n{result.stderr}")
 
 
 def main():
@@ -225,6 +231,8 @@ def main():
     # Save the workout data to a CSV file
     workout_df.to_csv('workout_data.csv', index=False)
     print('Workout data saved to workout_data.csv')
+    
+    run_database_connection()
 
 if __name__ == '__main__':
     main()

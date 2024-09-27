@@ -1,0 +1,55 @@
+[{
+  "_id": {
+    "$oid": "66f6289300962112e5c73bf8"
+  },
+  "name": "Spongebob",
+  "age": 30,
+  "gpa": 3.2,
+  "fullTime": false
+},
+{
+  "_id": {
+    "$oid": "66f6297a00962112e5c73bf9"
+  },
+  "name": "Patrick",
+  "age": 38,
+  "gpa": 1.5,
+  "fullTime": false
+},
+{
+  "_id": {
+    "$oid": "66f6297a00962112e5c73bfa"
+  },
+  "name": "Sandy",
+  "age": 27,
+  "gpa": 4,
+  "fullTime": false
+},
+{
+  "_id": {
+    "$oid": "66f6297a00962112e5c73bfb"
+  },
+  "name": "Thilak",
+  "age": 30,
+  "gpa": 3.8,
+  "fullTime": false
+},
+{
+  "_id": {
+    "$oid": "66f62d5e00962112e5c73bfd"
+  },
+  "name": "Zowmi",
+  "age": 22,
+  "gpa": 4.2,
+  "graduationDate": null,
+  "courses": [
+    "Editing",
+    "Sound Engineering"
+  ],
+  "address": {
+    "street": "123, Fake ST.",
+    "city": "Coimbatore",
+    "zip": 641089
+  },
+  "fullTime": true
+}]
