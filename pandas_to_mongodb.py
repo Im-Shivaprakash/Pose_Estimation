@@ -18,3 +18,4 @@ collection.insert_many(data_dict)
 
 for doc in collection.find():
     print(doc)
+
